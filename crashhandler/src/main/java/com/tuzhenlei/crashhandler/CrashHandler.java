@@ -1,4 +1,4 @@
-package com.layne.crashhandlerlib;
+package com.tuzhenlei.crashhandler;
 
 /**
  * author：tuzhenlei

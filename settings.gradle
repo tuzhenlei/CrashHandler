@@ -1,1 +1,1 @@
-include ':app', ':crashhandlerlib'
+include ':app', ':crashhandler'

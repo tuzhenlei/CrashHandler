@@ -1,4 +1,4 @@
-package com.layne.crashhandlerlib;
+package com.tuzhenlei.crashhandler;
 
 import android.app.Activity;
 import android.app.Application;
