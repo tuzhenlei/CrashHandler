@@ -2,7 +2,7 @@ package com.demo.crash;
 
 import android.app.Application;
 
-import com.tuzhenlei.crashhandlerlib.CrashHandler;
+import com.tuzhenlei.crashhandler.CrashHandler;
 
 
 /**

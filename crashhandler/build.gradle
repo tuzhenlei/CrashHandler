@@ -6,13 +6,6 @@ android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
 
-    defaultConfig {
-        minSdkVersion 14
-        targetSdkVersion 25
-        versionCode 1
-        versionName "1.0.1"
-
-    }
     buildTypes {
         release {
             minifyEnabled false
@@ -32,7 +25,7 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 }
 
-version = "1.0.0"
+version = "1.0.1"
 def siteUrl = 'https://github.com/tuzhenlei/CrashHandler' // 项目主页。
 def gitUrl = 'git@github.com:tuzhenlei/CrashHandler.git' // Git仓库的url。
 group = "com.tuzhenlei"
