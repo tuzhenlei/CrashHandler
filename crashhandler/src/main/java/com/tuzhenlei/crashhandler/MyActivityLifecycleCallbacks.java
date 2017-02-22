@@ -17,7 +17,7 @@ import java.util.List;
 @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 public class MyActivityLifecycleCallbacks implements Application.ActivityLifecycleCallbacks {
 
-	private static List<Activity> activities = new LinkedList<>();
+	private List<Activity> activities = new LinkedList<>();
 	public static int sAnimationId = 0;
 
 	@Override
@@ -58,7 +58,7 @@ public class MyActivityLifecycleCallbacks implements Application.ActivityLifecyc
 	/**
 	 * 添加Activity
 	 */
-	public static void addActivity(Activity activity) {
+	public void addActivity(Activity activity) {
 		if (activities == null) {
 			activities = new LinkedList<>();
 		}
@@ -71,7 +71,7 @@ public class MyActivityLifecycleCallbacks implements Application.ActivityLifecyc
 	/**
 	 * 移除Activity
 	 */
-	public static void removeActivity(Activity activity) {
+	public void removeActivity(Activity activity) {
 		if (activities.contains(activity)) {
 			activities.remove(activity);
 		}
@@ -85,7 +85,7 @@ public class MyActivityLifecycleCallbacks implements Application.ActivityLifecyc
 	/**
 	 * 销毁所有activity
 	 */
-	public static void removeAllActivities() {
+	public void removeAllActivities() {
 		for (Activity activity : activities) {
 			if (null != activity) {
 				activity.finish();
