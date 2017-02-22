@@ -6,6 +6,7 @@ package com.tuzhenlei.crashhandler;
  * note  ：UncaughtException处理类
  */
 
+import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.app.Application;
 import android.app.PendingIntent;
@@ -42,55 +43,33 @@ import java.util.Map;
  * 需要在Application中注册，为了要在程序启动器就监控整个程序。
  */
 public class CrashHandler implements Thread.UncaughtExceptionHandler {
-	/**
-	 * TAG
-	 */
+	//TAG
 	public static final String TAG = "CrashHandler";
-
-	MyActivityLifecycleCallbacks mMyActivityLifecycleCallbacks = new MyActivityLifecycleCallbacks();
-
-	/**
-	 * 系统默认的UncaughtException处理类
-	 */
+	//自定义Toast
+	private static Toast mCustomToast;
+	//提示文字
+	private static String mCrashTip = "很抱歉,程序出现异常,即将退出.";
+	//系统默认的UncaughtException处理类
 	private Thread.UncaughtExceptionHandler mDefaultHandler;
-	/**
-	 * CrashHandler实例
-	 */
+	//CrashHandler实例
 	private static CrashHandler mCrashHandler;
-	/**
-	 * 程序的App对象
-	 */
+	//程序的App对象
 	public Application mApplication;
-	/**
-	 * 用来存储设备信息和异常信息
-	 */
+	//生命周期监听
+	MyActivityLifecycleCallbacks mMyActivityLifecycleCallbacks = new MyActivityLifecycleCallbacks();
+	//用来存储设备信息和异常信息
 	private Map<String, String> infos = new HashMap();
-	/**
-	 * 用于格式化日期,作为日志文件名的一部分
-	 */
+	//用于格式化日期,作为日志文件名的一部分
 	private DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-
-	/**
-	 * 是否是Debug模式
-	 */
+	//是否是Debug模式
 	private boolean mIsDebug;
-	/**
-	 * 是否重启APP
-	 */
+	//是否重启APP
 	private boolean mIsRestartApp;
-
-	/**
-	 * 重启APP时间
-	 */
+	//重启APP时间
 	private long mRestartTime;
-
-	/**
-	 * 重启后的第一个Activity class文件
-	 */
+	//重启后的第一个Activity class文件
 	private Class mClassOfFirstActivity;
-	/**
-	 * 是否已经toast
-	 */
+	//是否已经toast
 	private boolean hasToast;
 
 	/**
@@ -116,6 +95,13 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
 		MyActivityLifecycleCallbacks.sAnimationId = closeAnimation;
 	}
 
+	public static void setCustomToast(Toast customToast) {
+		mCustomToast = customToast;
+	}
+
+	public static void setCrashTip(String crashTip) {
+		mCrashTip = crashTip;
+	}
 
 	public void init(Application application, boolean isDebug, boolean isRestartApp, long restartTime, Class classOfFirstActivity) {
 		mIsRestartApp = isRestartApp;
@@ -133,14 +119,16 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
 	 *
 	 * @since V1.0
 	 */
+	@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 	private void initCrashHandler(Application application, boolean isDebug) {
 		mIsDebug = isDebug;
 		mApplication = application;
 		mApplication.registerActivityLifecycleCallbacks(mMyActivityLifecycleCallbacks);
-		// 获取系统默认的UncaughtException处理器
-		mDefaultHandler = Thread.getDefaultUncaughtExceptionHandler();
 		// 设置该CrashHandler为程序的默认处理器
 		Thread.setDefaultUncaughtExceptionHandler(this);
+		// 获取系统默认的UncaughtException处理器
+		mDefaultHandler = Thread.getDefaultUncaughtExceptionHandler();
+
 	}
 
 	/**
@@ -150,16 +138,18 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
 	public void uncaughtException(Thread thread, Throwable ex) {
 		boolean isHandle = handleException(ex);
 		if (!isHandle && mDefaultHandler != null) {
-			// 如果用户没有处理则让系统默认的异常处理器来处理
+			// 如果我们没有处理则让系统默认的异常处理器来处理
 			mDefaultHandler.uncaughtException(thread, ex);
 		} else {
 			try {
+				//给Toast留出时间
 				Thread.sleep(2800);
 			} catch (InterruptedException e) {
 				Log.e(TAG, "uncaughtException() InterruptedException:" + e);
 			}
 
 			if (mIsRestartApp) {
+				//利用系统时钟进行重启任务
 				AlarmManager mgr = (AlarmManager) mApplication.getSystemService(Context.ALARM_SERVICE);
 				try {
 					Intent intent = new Intent(mApplication, mClassOfFirstActivity);
@@ -173,7 +163,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
 
 			mMyActivityLifecycleCallbacks.removeAllActivities();
 			android.os.Process.killProcess(android.os.Process.myPid());
-			System.exit(0);
+			System.exit(1);
 			System.gc();
 
 		}
@@ -184,19 +174,28 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
 	 *
 	 * @param ex
 	 * @return true:如果处理了该异常信息;否则返回false.
-	 * @since V1.0
 	 */
 	private boolean handleException(Throwable ex) {
 		if (!hasToast) {
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
-					Looper.prepare();
-					Toast toast = Toast.makeText(mApplication, "很抱歉,程序出现异常,即将退出.", Toast.LENGTH_LONG);
-					toast.setGravity(Gravity.CENTER, 0, 0);
-					toast.show();
-					Looper.loop();
-					hasToast = true;
+					try {
+						Looper.prepare();
+						Toast toast;
+						if (mCustomToast == null) {
+							toast = Toast.makeText(mApplication, mCrashTip, Toast.LENGTH_LONG);
+							toast.setGravity(Gravity.CENTER, 0, 0);
+						} else {
+							toast = mCustomToast;
+						}
+						toast.show();
+						Looper.loop();
+						hasToast = true;
+					} catch (Exception e) {
+						Log.e(TAG, "handleException Toast error" + e);
+					}
+
 				}
 			}).start();
 		}
@@ -287,8 +286,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
 	}
 
 	/**
-	 * 将捕获的导致崩溃的错误信息发送给开发人员
-	 * 目前只将log日志保存在sdcard 和输出到LogCat中，并未发送给后台。
+	 * 将捕获的导致崩溃的错误信息保存在sdcard 和输出到LogCat中
 	 *
 	 * @param fileName
 	 * @since V1.0
@@ -335,4 +333,5 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
 		printWriter.close();
 		return result.toString();
 	}
+
 }

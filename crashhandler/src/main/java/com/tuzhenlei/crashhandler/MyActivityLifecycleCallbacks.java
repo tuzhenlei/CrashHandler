@@ -1,7 +1,9 @@
 package com.tuzhenlei.crashhandler;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Application;
+import android.os.Build;
 import android.os.Bundle;
 
 import java.util.LinkedList;
@@ -12,6 +14,7 @@ import java.util.List;
  * time  ：2017/2/20 17:49
  */
 
+@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 public class MyActivityLifecycleCallbacks implements Application.ActivityLifecycleCallbacks {
 
 	private static List<Activity> activities = new LinkedList<>();

@@ -18,8 +18,7 @@ public class MyApplication extends Application {
 		/**
 		 * 不带重启的
 		 */
-		CrashHandler.getInstance().init(this, BuildConfig.DEBUG);
-//		CrashHandler.setCloseAnimation(android.R.anim.fade_out);
+//		CrashHandler.getInstance().init(this, BuildConfig.DEBUG);
 		/**
 		 * 带重启的
 		 * 参数1:this
@@ -29,6 +28,22 @@ public class MyApplication extends Application {
 		 * 参数5：重启后打开的第一个activity，建议是splashActivity
 		 */
 
-//		CrashHandler.getInstance().init(this, BuildConfig.DEBUG, true, 1000, MainActivity.class);
+		CrashHandler.getInstance().init(this, BuildConfig.DEBUG, true, 0, MainActivity.class);
+
+
+		/**
+		 * 更多的设置方法
+		 */
+		/*
+		//自定义Toast
+		Toast toast = Toast.makeText(this, "自定义提示信息", Toast.LENGTH_LONG);
+		toast.setGravity(Gravity.BOTTOM, 0, 0);
+		CrashHandler.setCustomToast(toast);
+		//自定义提示信息
+		CrashHandler.setCrashTip("自定义提示信息");
+		//自定义APP关闭动画
+		CrashHandler.setCloseAnimation(android.R.anim.fade_out);
+		*/
+
 	}
 }
