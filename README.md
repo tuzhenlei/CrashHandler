@@ -1,5 +1,5 @@
 #CrashHandler
-[ ![Download](https://api.bintray.com/packages/tzl/CrashHandler/CrashHandler/images/download.svg?version=1.0.0) ](https://bintray.com/tzl/CrashHandler/CrashHandler/1.0.0/link)
+ [ ![Download](https://api.bintray.com/packages/tzl/CrashHandler/CrashHandler/images/download.svg?version=1.0.1) ](https://bintray.com/tzl/CrashHandler/CrashHandler/1.0.1/link)
 
 Library to handle crash for Android . Especially that after crash，app will restart the stack top activity when API >=21.  
  (minSdkVersion=14).  
@@ -20,7 +20,7 @@ Library to handle crash for Android . Especially that after crash，app will res
 ######Add dependencies in build.gradle.
 
     dependencies {  
-    　　compile 'com.tuzhenlei:crashhandler:1.0.0' 
+    　　compile 'com.tuzhenlei:crashhandler:1.0.1'
     }
 
 ######Or Maven:
@@ -28,7 +28,7 @@ Library to handle crash for Android . Especially that after crash，app will res
     <dependency>
       <groupId>com.tuzhenlei</groupId>
       <artifactId>crashhandler</artifactId>
-      <version>1.0.0</version>
+      <version>1.0.1</version>
       <type>pom</type>
     </dependency>
 
